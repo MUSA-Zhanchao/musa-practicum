@@ -1,4 +1,4 @@
-# Streetscape Analysis Using AI: Mapping Crosswalk Conditions and Pedestrian Infrastructure from Street View and Aerial Imagery
+# Streetscape Analysis Using AI: Mapping Crosswalk and Pedestrian Infrastructure from Street View and Aerial Imagery
 
 **Authors:** Zicheng Xiang, Zhanchao Yang<br>
 **Advisors:** Dr. Xiaojiang Li, Dr. Erick Guerra <br>
