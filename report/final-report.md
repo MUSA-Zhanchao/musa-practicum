@@ -103,7 +103,6 @@ The deployed model was then applied to three large mosaics covering the middle, 
 
 Across the three deployment scenes the model produced **3,610 crosswalk polygons** — a first-pass citywide(-scale) crosswalk inventory where none previously existed at this resolution. These are written as `<scene>_crosswalks.gpkg` / `.shp`, with per-polygon area in square feet, suitable for direct use in ArcGIS or QGIS.
 
-The full segmentation pipeline — from label rasterization through training, thresholding, full-scene prediction, and polygonization — is documented in [`results-segementation/python-segementation.ipynb`](results-segementation/python-segementation.ipynb), with the citywide deployment script in [`results-segementation/deploy.ipynb`](results-segementation/deploy.ipynb).
 
 ### 4.3 Integrated Outputs
 
@@ -113,7 +112,7 @@ Binding the two model outputs to the OSM intersection graph produces the integra
 2. **Crosswalks layer** — polygon geometries of detected crosswalks with area attributes.
 3. **Traffic control points** — stop sign and traffic signal locations as GeoJSON point layers per neighborhood.
 
-These feed the interactive web application described in [`final-visulization.md`](final-visulization.md), which allows users to click any intersection to inspect estimated crossing width, crosswalk presence, and nearby traffic controls, and to launch Google Street View for visual verification.
+These feed the interactive web application, which allows users to click any intersection to inspect estimated crossing width, crosswalk presence, and nearby traffic controls, and to launch Google Street View for visual verification.
 
 
 
@@ -124,8 +123,6 @@ The results support the core claim of the project: a combined aerial-segmentatio
 **Detection patterns recover known streetscape structure.** The commercial-core vs. rowhouse-neighborhood inversion documented in Section 4.1 — signalized control clustering in University City, Logan Square, Center City, and Rittenhouse; stop-sign control clustering in Kensington, West Kensington, Fishtown, and Point Breeze — is not something we imposed. It emerges directly from the detector output and matches what anyone who has walked these neighborhoods already knows. That the pipeline reproduces this pattern *asymmetrically* (with the signal side attenuated by the detector's known recall weakness, yet still clearly visible) gives some confidence that the stop-sign side, where the model is strong, is close to a census. For planners, the practical implication is that the workflow can be used to map *where a given control type dominates* — useful for pedestrian-signal retiming studies, stop-sign compliance audits, or identifying uncontrolled intersections for midblock-crossing studies — with the caveat that signal counts should be treated as a lower bound.
 
 **Crosswalk segmentation generalizes within a single imagery program.** The pixel-level F1 of 0.94 on the University City test set is strong, and the fact that applying the same model to three much larger mosaics (covering roughly 10× the training area) yielded coherent polygon inventories — 3,610 polygons with no manual correction — indicates that within a single aerial imagery program (PASDA 2024, ~15 cm/pixel, consistent lighting and capture season), transfer is practical. This is the right unit of transfer to reason about: annual PASDA captures mean that the same pipeline can, in principle, be re-run each year to track marking degradation and new installations without retraining.
-
-**The combination is more than the sum of parts.** Aerial segmentation indicates that a crosswalk exists and provides its geometry; it cannot tell you whether the approach is controlled. Street-view detection tells you the control type but cannot reliably give you the crossing width. Binding both to the intersection graph produces a per-approach record — `(intersection_id, approach_direction, crossing_width, crosswalk_coverage, control_type)` — that matches the unit of analysis used in pedestrian-safety research. This is the planning-relevant product; each individual model output is a means to it.
 
 For OTIS and similar agencies, the immediate use case is screening. Rather than asking "where should we send a survey crew?", an analyst can filter the crossings layer for long crossing distances with low marking coverage and no signal control — a plausible proxy for high-risk uncontrolled crossings — and prioritize field inspection accordingly. The workflow does not replace engineering measurement; it tells you where engineering measurement is most likely to be worth the expense.
 
@@ -144,7 +141,6 @@ Several limitations qualify these results.
 
 **Crossing distance estimation is a geometric proxy, not a measurement.** The perpendicular transect method in the baseline scripts estimates curb-to-curb distance using road-surface segmentation masks and the intersection approach graph. It does not account for corner curves, bulb-outs, refuge islands, or diagonal crossings, all of which matter for actual pedestrian exposure. Reported widths should be interpreted as first-order approximations; anything within a factor of approach lane-count of the true value is what the method can currently deliver.
 
-**The workflow is descriptive, not causal.** We do not claim that any of the infrastructure features mapped here *cause* differences in pedestrian safety, travel behavior, or accessibility outcomes. Linking the dataset to crash records, travel-survey data, or accessibility scores is a natural next step but is outside the scope of this practicum.
 
 
 
