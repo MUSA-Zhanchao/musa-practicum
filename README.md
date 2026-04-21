@@ -19,7 +19,6 @@ Existing pedestrian infrastructure datasets in the City of Philadelphia are eith
 
 **What's missing in current data:**
 - Curb-to-curb crossing distances at intersections across the city
-- Crosswalk striping condition (faded, worn, or freshly painted)
 - Locations of stop signs and streetlights at intersections
 
 This project is designed to address that gap by proposing and testing a computer vision based approach that can be applied at the scale of a full city using readily available aerial imagery and street view imagery.
