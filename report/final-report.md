@@ -77,24 +77,7 @@ On a held-out twelve-patch visualization sample, mean Dice was 0.816 and mean Io
 
 The deployed model was then applied to three large mosaics covering the middle, southern, and upper-middle portions of the study area. Sliding-window inference at a 256-pixel patch size and a 128-pixel stride produced pixel-level probability rasters, which were thresholded at 0.45, cleaned by removing connected components smaller than 200 pixels, morphologically closed, and vectorized to polygons.
 
-| Mosaic | Raster size (px) | Windows processed | Positive pixels (cleaned) | Crosswalk polygons |
-|---|---|---:|---:|---:|
-| middle | 42,240 × 31,680 | 81,263 | 6,914,860 | **1,495** |
-| south | 73,920 × 21,120 | 94,628 | 5,744,029 | **1,456** |
-| upper-middle | 73,920 × 10,560 | 47,314 | 3,357,686 | **659** |
-
 Across the three deployment scenes the model produced **3,610 crosswalk polygons** — a first-pass citywide(-scale) crosswalk inventory where none previously existed at this resolution. These are written as `<scene>_crosswalks.gpkg` / `.shp`, with per-polygon area in square feet, suitable for direct use in ArcGIS or QGIS.
-
-
-### 4.3 Integrated Outputs
-
-Binding the two model outputs to the OSM intersection graph produces the integrated products targeted by the practicum:
-
-1. **Crossings layer** — intersection-approach records with estimated curb-to-curb crossing distance and approach-level crosswalk marking coverage.
-2. **Crosswalks layer** — polygon geometries of detected crosswalks with area attributes.
-3. **Traffic control points** — stop sign and traffic signal locations as GeoJSON point layers per neighborhood.
-
-These feed the interactive web application, which allows users to click any intersection to inspect estimated crossing width, crosswalk presence, and nearby traffic controls, and to launch Google Street View for visual verification.
 
 
 
@@ -113,12 +96,24 @@ For OTIS and similar agencies, the immediate use case is screening. Rather than 
 
 Several limitations qualify these results.
 
-**Training data scale and geographic scope.** The U-Net was trained on 202 manually labeled crosswalks from a single pilot area (University City). Although the deployment scenes are drawn from the same imagery program, neighborhoods with marking styles absent from the training set — e.g., artistic or asphalt-art crosswalks, heavily faded continental bars, or unusual ladder spacings — are underrepresented and are likely to be where the model's residual errors concentrate. The twelve-patch visualization audit showed one sample with a Dice of zero, confirming that failure cases exist; a more systematic error audit across the deployment scenes is a clear next step.
-
 **No independent ground-truth evaluation at deployment scale.** The 0.94 Dice reported in Section 4.2 is a held-out *patch-level* metric within the University City pilot. We have not produced an independent field-validated sample for the larger deployment mosaics, so the pixel-level performance on those scenes is an extrapolation. Similarly, the YOLO detection numbers are reported on the COCO val2017 set, not on a Philadelphia-specific, hand-labeled evaluation set. Both models would benefit from a small, location-stratified validation audit before any planning decisions are made regarding the outputs.
 
 **Detection is biased by imagery availability.** Google Street View coverage is uneven in both space and time — some arms have 2019 imagery, others 2023 — and panorama capture dates are mixed across our fourteen neighborhoods. A stop sign installed in 2022 will appear or not, depending on which pano Google served. For a monitoring application this is a hard constraint: the pipeline is only as current as the underlying imagery.
 
 **Traffic-light recall is substantially lower than stop-sign recall.** The COCO benchmark shows traffic-light recall of 0.48 compared to 0.72 for stop signs, and field experience suggests traffic-light detection is degraded further by viewing geometry (signals mounted overhead or far from the approach) and by confusion with other illuminated street furniture. Deployment counts for traffic lights should be treated as a lower bound rather than a census.
 
-**Crossing distance estimation is a geometric proxy, not a measurement.** The perpendicular transect method in the baseline scripts estimates curb-to-curb distance using road-surface segmentation masks and the intersection approach graph. It does not account for corner curves, bulb-outs, refuge islands, or diagonal crossings, all of which matter for actual pedestrian exposure. Reported widths should be interpreted as first-order approximations; anything within a factor of approach lane-count of the true value is what the method can currently deliver.
+
+
+## References
+
+- Berriel, R.F., Rossi, F.S., de Souza, A.F., Oliveira-Santos, T. (2017). Automatic large-scale data acquisition via crowdsourcing for crosswalk classification. *Computers & Graphics*. https://doi.org/10.1016/j.cag.2017.08.004
+- Biljecki, F., Ito, K. (2021). Street view imagery in urban analytics and GIS: A review. *Landscape and Urban Planning*. https://doi.org/10.1016/j.landurbplan.2021.104217
+- Cain, K.L., Millstein, R.A., Sallis, J.F., et al. (2014). Contribution of streetscape audits to explanation of physical activity in four age groups based on the MAPS. *Social Science & Medicine*.https://doi.org/10.1016/j.socscimed.2014.06.042
+- Campbell, A., Both, A., Sun, Q. (2019). Detecting and mapping traffic signs from Google Street View images. *Computers, Environment and Urban Systems*. https://doi.org/10.1016/j.compenvurbsys.2019.101350
+- Clifton, K.J., Livi Smith, A.D., Rodriguez, D. (2007). The development and testing of an audit for the pedestrian environment. *Landscape and Urban Planning*. https://doi.org/10.1016/j.landurbplan.2006.06.008
+- Frank, L.D., Sallis, J.F., Conway, T.L., et al. (2006). Many pathways from land use to health. *JAPA*. https://doi.org/10.1080/01944360608976725
+- Glazier, R.H., Creatore, M.I., Weyman, J.T., et al. (2014). Density, destinations or both? A comparison of measures of walkability. *PLOS ONE*. https://doi.org/10.1371/journal.pone.0085295
+- Hosseini, M., Sevtsuk, A., Miranda, F., et al. (2022). Mapping the walk: A scalable computer vision approach for generating sidewalk network datasets from aerial imagery. *Computers, Environment and Urban Systems*. https://doi.org/10.1016/j.compenvurbsys.2023.101950
+- Li, X., Zhang, C., Li, W., et al. (2015). Assessing street-level urban greenery using Google Street View and a modified green view index. *Urban Forestry & Urban Greening*. https://doi.org/10.1016/j.ufug.2015.06.006
+- Naik, N., Philipoom, J., Raskar, R., Hidalgo, C. (2014). Streetscore — Predicting the perceived safety of one million streetscapes. *CVPR Workshops*. https://dspace.mit.edu/handle/1721.1/92811
+- Ronneberger, O., Fischer, P., Brox, T. (2015). U-Net: Convolutional networks for biomedical image segmentation. *MICCAI*. https://doi.org/10.1007/978-3-319-24574-4_28
