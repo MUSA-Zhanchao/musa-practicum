@@ -58,24 +58,6 @@ Stop-sign detection is substantially stronger than traffic-light detection at ev
 
 Across the fourteen study areas, we processed **9,950 street-view images** and produced **3,745 total detections**, including **2,901 traffic lights** across 1,481 images and **844 stop signs** across 780 images. Aggregated citywide, the traffic-light detection rate is **14.9%** of sampled images (mean confidence 0.677) and the stop-sign rate is **7.8%** (mean confidence 0.712, slightly higher than traffic lights). At the image level, stop signs average ~1.0 instance per positive image, whereas traffic lights average 1.8–2.4 instances, consistent with signalized intersections typically carrying a *cluster* of signal heads (one per approach lane), while stop-controlled approaches have a single sign.
 
-
-| Neighborhood | Images | TL rate | TL detections | SS rate | SS detections |
-|---|---:|---:|---:|---:|---:|
-| CALLOWHILL | 288 | 18.4% | 124 | 6.6% | 19 |
-| Center City | 275 | 27.6% | 141 | 4.4% | 12 |
-| CHINATOWN | 112 | 26.8% | 62 | 1.8% | 3 |
-| EAST_KENSINGTON | 475 | 10.5% | 97 | 12.2% | 65 |
-| FISHTOWN | 1,631 | 4.8% | 161 | 11.2% | 191 |
-| KENSINGTON | 444 | 9.9% | 72 | 11.9% | 56 |
-| LOGAN_SQUARE | 752 | 26.2% | 389 | 5.3% | 43 |
-| OLD_CITY | 660 | 17.7% | 237 | 3.6% | 28 |
-| POINT_BREEZE | 1,152 | 5.0% | 103 | 10.6% | 137 |
-| RITTENHOUSE | 1,068 | 20.3% | 406 | 4.3% | 47 |
-| SOCIETY_HILL | 524 | 12.6% | 116 | 4.2% | 23 |
-| UNIVERSITY_CITY | 632 | 34.7% | 518 | 3.6% | 26 |
-| WASHINGTON_SQUARE_WEST | 832 | 16.7% | 228 | 3.0% | 29 |
-| WEST_KENSINGTON | 1,105 | 12.3% | 247 | 13.8% | 165 |
-
 Average detection confidence was stable across neighborhoods (0.65–0.71 for traffic lights, 0.61–0.80 for stop signs), suggesting that between-neighborhood differences reflect real variation in installed infrastructure rather than systematic detector drift. 
 
 ### 4.2 Crosswalk Segmentation (U-Net)
@@ -140,21 +122,3 @@ Several limitations qualify these results.
 **Traffic-light recall is substantially lower than stop-sign recall.** The COCO benchmark shows traffic-light recall of 0.48 compared to 0.72 for stop signs, and field experience suggests traffic-light detection is degraded further by viewing geometry (signals mounted overhead or far from the approach) and by confusion with other illuminated street furniture. Deployment counts for traffic lights should be treated as a lower bound rather than a census.
 
 **Crossing distance estimation is a geometric proxy, not a measurement.** The perpendicular transect method in the baseline scripts estimates curb-to-curb distance using road-surface segmentation masks and the intersection approach graph. It does not account for corner curves, bulb-outs, refuge islands, or diagonal crossings, all of which matter for actual pedestrian exposure. Reported widths should be interpreted as first-order approximations; anything within a factor of approach lane-count of the true value is what the method can currently deliver.
-
-
-
-
-
-## References (selected)
-
-- Berriel, R.F., Rossi, F.S., de Souza, A.F., Oliveira-Santos, T. (2017). Automatic large-scale data acquisition via crowdsourcing for crosswalk classification. *Computers & Graphics*.
-- Biljecki, F., Ito, K. (2021). Street view imagery in urban analytics and GIS: A review. *Landscape and Urban Planning*.
-- Cain, K.L., Millstein, R.A., Sallis, J.F., et al. (2014). Contribution of streetscape audits to explanation of physical activity in four age groups based on the MAPS. *Social Science & Medicine*.
-- Campbell, A., Both, A., Sun, Q. (2019). Detecting and mapping traffic signs from Google Street View images. *Computers, Environment and Urban Systems*.
-- Clifton, K.J., Livi Smith, A.D., Rodriguez, D. (2007). The development and testing of an audit for the pedestrian environment. *Landscape and Urban Planning*.
-- Frank, L.D., Sallis, J.F., Conway, T.L., et al. (2006). Many pathways from land use to health. *JAPA*.
-- Glazier, R.H., Creatore, M.I., Weyman, J.T., et al. (2014). Density, destinations or both? A comparison of measures of walkability. *PLOS ONE*.
-- Hosseini, M., Sevtsuk, A., Miranda, F., et al. (2022). Mapping the walk: A scalable computer vision approach for generating sidewalk network datasets from aerial imagery. *Computers, Environment and Urban Systems*.
-- Li, X., Zhang, C., Li, W., et al. (2015). Assessing street-level urban greenery using Google Street View and a modified green view index. *Urban Forestry & Urban Greening*.
-- Naik, N., Philipoom, J., Raskar, R., Hidalgo, C. (2014). Streetscore — Predicting the perceived safety of one million streetscapes. *CVPR Workshops*.
-- Ronneberger, O., Fischer, P., Brox, T. (2015). U-Net: Convolutional networks for biomedical image segmentation. *MICCAI*.
